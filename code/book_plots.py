@@ -7,6 +7,26 @@ Created on Fri May  2 12:21:40 2014
 import matplotlib.pyplot as plt
 import numpy as np
 
+def plot_errorbars(bars, xlims):
+
+    i = 1.0
+    for bar in bars:
+        plt.errorbar([bar[0]], [i], xerr=[bar[1]], fmt='o', label=bar[2] , capthick=2, capsize=10)
+        i += 0.2
+
+    plt.ylim(0, 2)
+    plt.xlim(xlims[0], xlims[1])
+    show_legend()
+    plt.gca().axes.yaxis.set_ticks([])
+    plt.show()
+    
+        
+
+
+def show_legend():
+    plt.legend(loc='center left', bbox_to_anchor=(1, 0.5))
+
+
 def bar_plot(pos, ylim=(0,1), title=None):
     plt.cla()
     ax = plt.gca()
@@ -52,19 +72,34 @@ def plot_residual_limits(Ps):
                  facecolor='#ffff00', alpha=0.3)
 
 
-def plot_track(xs, ys=None, label='Track', c='k', lw=2):
+def plot_track(xs, ys=None, label='Track', c='k', lw=2, **kwargs):
     if ys is not None:
-        plt.plot(xs, ys, c=c, lw=lw, label=label)
+        plt.plot(xs, ys, c=c, lw=lw, label=label, **kwargs)
     else:
-        plt.plot(xs, c=c, lw=lw, label=label)
+        plt.plot(xs, c=c, lw=lw, label=label, **kwargs)
 
 
 #c='#013afe'
-def plot_filter(xs, ys=None, c='#6d904f', label='Filter', **kwargs):
-    if ys is not None:
-        plt.plot(xs, ys, c=c, label=label, **kwargs)
-    else:
-        plt.plot(xs, c=c, label=label, **kwargs)
+def plot_filter(xs, ys=None, c='#6d904f', label='Filter', vars=None, **kwargs):
+
+    if ys is None:
+        ys = xs
+        xs = range(len(ys))
+
+    plt.plot(xs, ys, c=c, label=label, **kwargs)
+        
+    if vars is None:
+        return
+    vars = np.asarray(vars)
+    
+    std = np.sqrt(vars)
+    std_top = ys+std
+    std_btm = ys-std
+
+    plt.plot(xs, ys+std, linestyle=':', c='k', lw=2)
+    plt.plot(xs, ys-std, linestyle=':', c='k', lw=2)
+    plt.fill_between(xs, std_btm, std_top,
+                     facecolor='yellow', alpha=0.2)
 
 
 if __name__ == "__main__":
